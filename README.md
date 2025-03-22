@@ -1,5 +1,7 @@
 # Propeller 2 Development Suite
 
+[![Build](https://github.com/ikskuh/p2-devsuite/actions/workflows/build.yml/badge.svg)](https://github.com/ikskuh/p2-devsuite/actions/workflows/build.yml)
+
 This repository contains a build script which compiles a collection of tools for development of [Parallax Propeller 2](https://www.parallax.com/propeller-2/) software.
 
 Included software packages:
