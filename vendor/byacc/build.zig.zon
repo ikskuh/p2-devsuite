@@ -1,0 +1,20 @@
+.{
+    .name = .byacc,
+    .version = "20241231.0.0",
+    .fingerprint = 0xe09995b7b864cb54,
+
+    .minimum_zig_version = "0.14.0",
+
+    .dependencies = .{
+        .upstream = .{
+            // .url = "https://invisible-mirror.net/archives/byacc/byacc-20241231.tgz", // TLS failure
+            .url = "https://debian.repo.cure.edu.uy/mirror/pool/main/b/byacc/byacc_2.0.20241231.orig.tar.gz", // same file as above
+            .hash = "N-V-__8AAB0rUQCEru_KX3BPukG5eMh4tt8WIdQWFHhMomRL",
+        },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+    },
+}
