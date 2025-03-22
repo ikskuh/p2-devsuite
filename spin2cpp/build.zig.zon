@@ -1,0 +1,19 @@
+.{
+    .name = .spin2cpp,
+    .version = "7.1.1",
+    .fingerprint = 0xcde543164604465f,
+
+    .minimum_zig_version = "0.14.0",
+
+    .dependencies = .{
+        .upstream = .{
+            .url = "git+https://github.com/totalspectrum/spin2cpp.git#v7.1.1",
+            .hash = "N-V-__8AAOUErQDX6Zwe1aeK_COII7E566nhOgG8bC4qX88S",
+        },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+    },
+}
