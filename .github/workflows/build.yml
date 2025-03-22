@@ -11,8 +11,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        target: [x86_64-linux-musl, x86_64-windows, x86_64-macos, aarch64-macos]
+        os:
+            - ubuntu-latest
+            # - windows-latest # disabled as we don't have bison/yacc available here!
+            # - macos-latest # disabled as we don't have bison/yacc available here!
+        target: 
+            - x86_64-linux-musl
+            - x86_64-windows
+            - x86_64-macos
+            - aarch64-macos
 
     runs-on: ${{ matrix.os }}
 

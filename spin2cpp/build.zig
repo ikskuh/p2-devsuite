@@ -134,7 +134,10 @@ pub fn build(b: *std.Build) void {
         "FLEXSPIN_BUILD",
     };
     const cflags: StringArray = &.{
-        "-Wall", "-fwrapv", "-Wc++-compat",
+        "-Wall",
+        "-fwrapv",
+        "-Wc++-compat",
+        "-Wno-error=date-time", // error: expansion of date or time macro is not reproducible
     };
 
     {

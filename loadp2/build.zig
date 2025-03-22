@@ -104,6 +104,7 @@ pub fn build(b: *std.Build) void {
 
     const cflags: []const []const u8 = &.{
         "-Wall",
+        "-Wno-error=date-time", // error: expansion of date or time macro is not reproducible
     };
 
     const os_file = switch (target.result.os.tag) {
