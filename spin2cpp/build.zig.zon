@@ -10,6 +10,7 @@
             .url = "git+https://github.com/totalspectrum/spin2cpp.git#v7.1.1",
             .hash = "N-V-__8AAOUErQDX6Zwe1aeK_COII7E566nhOgG8bC4qX88S",
         },
+        .byacc = .{ .path = "../vendor/byacc" },
     },
 
     .paths = .{

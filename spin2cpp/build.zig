@@ -2,74 +2,15 @@ const std = @import("std");
 
 const StringArray = []const []const u8;
 
-pub const YaccVersion = enum {
-    bison3,
-    bison2,
-    byacc,
-};
-
-pub const YaccInfo = struct {
-    run: []const []const u8,
-    spinprefix: []const []const u8,
-    basicprefix: []const []const u8,
-    cprefix: []const []const u8,
-};
-
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
     const install_testlex = b.option(bool, "testlex", "Builds testlex also in release modes") orelse false;
 
-    const yacc_check = b.option(bool, "yacc-check", "Prints detected YACC version and params") orelse false;
-    const yacc_ver = b.option(YaccVersion, "yacc-version", "Selects the version of YACC to use") orelse .bison3;
+    const byacc_dep = b.dependency("byacc", .{ .backtracking = false });
 
-    const yacc_exe = switch (yacc_ver) {
-        .bison2, .bison3 => "bison",
-        .byacc => "byacc",
-    };
-
-    // ifndef YACCVER
-    // YACC_CHECK := $(shell $(YACC) --version | fgrep 3.)
-    // ifeq ($(YACC_CHECK),)
-    //     ifeq ($(YACC),byacc)
-    //       YACCVER=byacc
-    //     else
-    //       YACCVER=bison2
-    //     endif
-    // else
-    //     YACCVER=bison3
-    // endif
-    // endif
-
-    // TODO: Implement YACC auto-detection!
-
-    const yacc: YaccInfo = switch (yacc_ver) {
-        .bison3 => .{
-            .run = &.{ yacc_exe, "-Wno-deprecated", "-D", "parse.error=verbose" },
-            .spinprefix = &.{ "-D", "api.prefix={spinyy}" },
-            .basicprefix = &.{ "-D", "api.prefix={basicyy}" },
-            .cprefix = &.{ "-D", "api.prefix={cgramyy}" },
-        },
-        .bison2 => .{
-            .run = &.{yacc_exe},
-            .spinprefix = &.{ "-p", "spinyy" },
-            .basicprefix = &.{ "-p", "basicyy" },
-            .cprefix = &.{ "-p", "cgramyy" },
-        },
-        .byacc => .{
-            .run = &.{ yacc_exe, "-s" },
-            .spinprefix = &.{ "-p", "spinyy" },
-            .basicprefix = &.{ "-p", "basicyy" },
-            .cprefix = &.{ "-p", "cgramyy" },
-        },
-    };
-
-    if (yacc_check) {
-        std.debug.print("YACC prefix  = '{s}'\n", .{yacc.run});
-        std.debug.print("YACC version = '{s}'\n", .{@tagName(yacc_ver)});
-        return;
-    }
+    const byacc_exe = byacc_dep.artifact("byacc");
 
     const upstream_dep = b.dependency("upstream", .{});
 
@@ -79,9 +20,8 @@ pub fn build(b: *std.Build) void {
         // $(BUILD)/spin.tab.c $BUILD)/spin.tab.h: frontends/spin/spin.y
         //       $(RUNYACC) $(YY_SPINPREFIX) -t -b $(BUILD)/spin -d frontends/spin/spin.y
 
-        const gen_spin_tab = b.addSystemCommand(yacc.run);
-        gen_spin_tab.addArgs(yacc.spinprefix);
-        gen_spin_tab.addArg("-t");
+        const gen_spin_tab = b.addRunArtifact(byacc_exe);
+        gen_spin_tab.addArgs(&.{ "-s", "-p", "spinyy", "-t" });
         gen_spin_tab.addArg("-b");
         const output = gen_spin_tab.addOutputFileArg("spin");
         gen_spin_tab.addArg("-d");
@@ -93,9 +33,8 @@ pub fn build(b: *std.Build) void {
         // $(BUILD)/basic.tab.c $(BUILD)/basic.tab.h: frontends/basic/basic.y
         //       $(RUNYACC) $(YY_BASICPREFIX) -t -b $(BUILD)/basic -d frontends/basic/basic.y
 
-        const gen_basic_tab = b.addSystemCommand(yacc.run);
-        gen_basic_tab.addArgs(yacc.basicprefix);
-        gen_basic_tab.addArg("-t");
+        const gen_basic_tab = b.addRunArtifact(byacc_exe);
+        gen_basic_tab.addArgs(&.{ "-s", "-p", "basicyy", "-t" });
         gen_basic_tab.addArg("-b");
         const output = gen_basic_tab.addOutputFileArg("basic");
         gen_basic_tab.addArg("-d");
@@ -107,9 +46,8 @@ pub fn build(b: *std.Build) void {
         // $(BUILD)/cgram.tab.c $(BUILD)/cgram.tab.h: frontends/c/cgram.y
         //       $(RUNYACC) $(YY_CPREFIX) -t -b $(BUILD)/cgram -d frontends/c/cgram.y
 
-        const gen_cgram_tab = b.addSystemCommand(yacc.run);
-        gen_cgram_tab.addArgs(yacc.cprefix);
-        gen_cgram_tab.addArg("-t");
+        const gen_cgram_tab = b.addRunArtifact(byacc_exe);
+        gen_cgram_tab.addArgs(&.{ "-s", "-p", "cgramyy", "-t" });
         gen_cgram_tab.addArg("-b");
         const output = gen_cgram_tab.addOutputFileArg("cgram");
         gen_cgram_tab.addArg("-d");

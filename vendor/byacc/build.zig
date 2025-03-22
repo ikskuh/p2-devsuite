@@ -6,6 +6,8 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const backtracking = b.option(bool, "backtracking", "Enables or disables backtracking (default: disabled") orelse false;
+
     const upstream_dep = b.dependency("upstream", .{});
 
     const byacc_config = b.addConfigHeader(
@@ -67,6 +69,14 @@ pub fn build(b: *std.Build) void {
         .files = byacc_sources,
         .flags = cflags,
     });
+    byacc_exe.addCSourceFile(.{
+        // "$(SKELETON).c",
+        .file = if (backtracking)
+            upstream_dep.path("btyaccpar.c")
+        else
+            upstream_dep.path("yaccpar.c"),
+        .flags = cflags,
+    });
 
     b.installArtifact(byacc_exe);
 }
@@ -86,7 +96,6 @@ const byacc_sources: []const []const u8 = &.{
     "mstring.c",
     "output.c",
     "reader.c",
-    "btyaccpar.c", // "$(SKELETON).c",
     "symtab.c",
     "verbose.c",
     "warshall.c",
