@@ -13,7 +13,7 @@ jobs:
       matrix:
         os:
             - ubuntu-latest
-            - windows-latest
+            # - windows-latest (Windows fails due to byacc not supporting \\ paths, how fun)
             - macos-latest
         target: 
             - x86_64-linux-musl
