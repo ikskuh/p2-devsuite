@@ -18,8 +18,8 @@ jobs:
         target: 
             - x86_64-linux-musl
             - x86_64-windows
-            - x86_64-macos
-            - aarch64-macos
+            # - x86_64-macos # disabled due to <sys/timeb.h> missing!
+            # - aarch64-macos # disabled due to <sys/timeb.h> missing!
 
     runs-on: ${{ matrix.os }}
 
