@@ -1,0 +1,19 @@
+.{
+    .name = .loadp2,
+    .version = "0.7.5",
+    .fingerprint = 0xfe3a55f24eb99a1c,
+    .minimum_zig_version = "0.14.0",
+
+    .dependencies = .{
+        .upstream = .{
+            .url = "git+https://github.com/totalspectrum/loadp2.git#v075",
+            .hash = "N-V-__8AAE20CAD1GMOAaKouMYATg9KzIMSR5JluKaTfAQWj",
+        },
+        .spin2cpp = .{ .path = "../spin2cpp" },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+    },
+}

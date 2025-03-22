@@ -193,6 +193,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .link_libc = true,
         });
+        flexspin_exe.root_module.sanitize_c = false;
 
         for (include_paths) |path|
             flexspin_exe.addIncludePath(path);
@@ -237,6 +238,14 @@ pub fn build(b: *std.Build) void {
 
         b.installArtifact(flexcc_exe);
     }
+
+    const install_include_step = b.addInstallDirectory(.{
+        .source_dir = upstream_dep.path("include"),
+        .install_dir = .bin,
+        .install_subdir = "include",
+    });
+    b.getInstallStep().dependOn(&install_include_step.step);
+    b.addNamedLazyPath("include", upstream_dep.path("include"));
 }
 
 // OBJS = $(SPINOBJS) $(BUILD)/spin.tab.o $(BUILD)/basic.tab.o $(BUILD)/cgram.tab.o
