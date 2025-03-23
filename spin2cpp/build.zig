@@ -182,8 +182,8 @@ pub fn build(b: *std.Build) void {
 
     const install_include_step = b.addInstallDirectory(.{
         .source_dir = upstream_dep.path("include"),
-        .install_dir = .bin,
-        .install_subdir = "include",
+        .install_dir = .header,
+        .install_subdir = ".",
     });
     b.getInstallStep().dependOn(&install_include_step.step);
     b.addNamedLazyPath("include", upstream_dep.path("include"));

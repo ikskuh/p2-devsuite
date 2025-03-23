@@ -15,8 +15,8 @@ pub fn build(b: *std.Build) void {
 
     const install_include_step = b.addInstallDirectory(.{
         .source_dir = spin2cpp_dep.namedLazyPath("include"),
-        .install_dir = .bin,
-        .install_subdir = "include",
+        .install_dir = .header,
+        .install_subdir = ".",
     });
     b.getInstallStep().dependOn(&install_include_step.step);
 
