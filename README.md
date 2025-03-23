@@ -17,15 +17,15 @@ Get a copy of [Zig 0.14](https://ziglang.org/download/#release-0.14.0) for your 
 [user@work p2-devsuite]$ zig build
 [user@work p2-devsuite]$ tree zig-out
 zig-out
-└── bin
-    ├── flexcc
-    ├── flexspin
-    ├── include
-    │   ├── assert.h
-    │   ├── …
-    │   └── wctype.h
-    ├── loadp2
-    └── spin2cpp
+├── bin
+│   ├── flexcc
+│   ├── flexspin
+│   ├── loadp2
+│   └── spin2cpp
+└── include
+    ├── assert.h
+    ├── …
+    └── wctype.h
 
 26 directories, 327 files
 [user@work p2-devsuite]$ 
