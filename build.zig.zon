@@ -13,5 +13,8 @@
     .paths = .{
         "build.zig",
         "build.zig.zon",
+        "loadp2",
+        "spin2cpp",
+        "vendor/byacc",
     },
 }
