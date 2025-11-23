@@ -22,10 +22,11 @@ pub fn main() !void {
         };
     }
 
-    var output = try std.fs.cwd().atomicFile(argv[2], .{});
+    var output_buffer: [1024]u8 = undefined;
+    var output = try std.fs.cwd().atomicFile(argv[2], .{ .write_buffer = &output_buffer });
     defer output.deinit();
 
-    const writer = output.file.writer();
+    const writer = &output.file_writer.interface;
 
     try writer.print("unsigned char {s}[] = {{\n", .{symbol_name});
 

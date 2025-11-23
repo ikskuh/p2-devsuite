@@ -15,9 +15,11 @@ pub fn build(b: *std.Build) void {
 
     const fake_xxd = b.addExecutable(.{
         .name = "fake-xxd",
-        .optimize = .ReleaseSafe,
-        .root_source_file = b.path("src/fake-xxd.zig"),
-        .target = b.graph.host,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/fake-xxd.zig"),
+            .optimize = .ReleaseSafe,
+            .target = b.graph.host,
+        }),
     });
 
     const p2es_flashloader_bin = blk: {
@@ -114,9 +116,11 @@ pub fn build(b: *std.Build) void {
 
     const loadp2_exe = b.addExecutable(.{
         .name = "loadp2",
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+        }),
     });
 
     if (target.result.os.tag.isDarwin()) {
@@ -124,7 +128,7 @@ pub fn build(b: *std.Build) void {
     }
 
     for (header_files) |header| {
-        loadp2_exe.addIncludePath(header.dirname());
+        loadp2_exe.root_module.addIncludePath(header.dirname());
     }
 
     loadp2_exe.addCSourceFiles(.{
