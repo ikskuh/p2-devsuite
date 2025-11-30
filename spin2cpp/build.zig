@@ -21,7 +21,7 @@ pub fn build(b: *std.Build) void {
         //       $(RUNYACC) $(YY_SPINPREFIX) -t -b $(BUILD)/spin -d frontends/spin/spin.y
 
         const gen_spin_tab = b.addRunArtifact(byacc_exe);
-        gen_spin_tab.addArgs(&.{ "-s", "-p", "spinyy", "-t" });
+        gen_spin_tab.addArgs(&.{ "-s", "-p", "spinyy", "-t", "-l" });
         gen_spin_tab.addArg("-b");
         const output = gen_spin_tab.addOutputFileArg("spin");
         gen_spin_tab.addArg("-d");
@@ -34,7 +34,7 @@ pub fn build(b: *std.Build) void {
         //       $(RUNYACC) $(YY_BASICPREFIX) -t -b $(BUILD)/basic -d frontends/basic/basic.y
 
         const gen_basic_tab = b.addRunArtifact(byacc_exe);
-        gen_basic_tab.addArgs(&.{ "-s", "-p", "basicyy", "-t" });
+        gen_basic_tab.addArgs(&.{ "-s", "-p", "basicyy", "-t", "-l" });
         gen_basic_tab.addArg("-b");
         const output = gen_basic_tab.addOutputFileArg("basic");
         gen_basic_tab.addArg("-d");
@@ -47,7 +47,7 @@ pub fn build(b: *std.Build) void {
         //       $(RUNYACC) $(YY_CPREFIX) -t -b $(BUILD)/cgram -d frontends/c/cgram.y
 
         const gen_cgram_tab = b.addRunArtifact(byacc_exe);
-        gen_cgram_tab.addArgs(&.{ "-s", "-p", "cgramyy", "-t" });
+        gen_cgram_tab.addArgs(&.{ "-s", "-p", "cgramyy", "-t", "-l" });
         gen_cgram_tab.addArg("-b");
         const output = gen_cgram_tab.addOutputFileArg("cgram");
         gen_cgram_tab.addArg("-d");
@@ -76,18 +76,21 @@ pub fn build(b: *std.Build) void {
         "-fwrapv",
         "-Wc++-compat",
         "-Wno-error=date-time", // error: expansion of date or time macro is not reproducible
+        "-std=gnu11", // error: stuff not supported in C23
     };
 
     {
         const testlex_exe = b.addExecutable(.{
             .name = "testlex",
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .link_libc = true,
+            }),
         });
 
         for (include_paths) |path|
-            testlex_exe.addIncludePath(path);
+            testlex_exe.root_module.addIncludePath(path);
         for (compile_defines) |define|
             testlex_exe.root_module.addCMacro(define, "");
 
@@ -104,13 +107,15 @@ pub fn build(b: *std.Build) void {
     {
         const spin2cpp_exe = b.addExecutable(.{
             .name = "spin2cpp",
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .link_libc = true,
+            }),
         });
 
         for (include_paths) |path|
-            spin2cpp_exe.addIncludePath(path);
+            spin2cpp_exe.root_module.addIncludePath(path);
         for (compile_defines) |define|
             spin2cpp_exe.root_module.addCMacro(define, "");
 
@@ -130,14 +135,16 @@ pub fn build(b: *std.Build) void {
     {
         const flexspin_exe = b.addExecutable(.{
             .name = "flexspin",
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .link_libc = true,
+            }),
         });
-        flexspin_exe.root_module.sanitize_c = false;
+        flexspin_exe.root_module.sanitize_c = .off;
 
         for (include_paths) |path|
-            flexspin_exe.addIncludePath(path);
+            flexspin_exe.root_module.addIncludePath(path);
         for (compile_defines) |define|
             flexspin_exe.root_module.addCMacro(define, "");
 
@@ -157,13 +164,15 @@ pub fn build(b: *std.Build) void {
     {
         const flexcc_exe = b.addExecutable(.{
             .name = "flexcc",
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .link_libc = true,
+            }),
         });
 
         for (include_paths) |path|
-            flexcc_exe.addIncludePath(path);
+            flexcc_exe.root_module.addIncludePath(path);
         for (compile_defines) |define|
             flexcc_exe.root_module.addCMacro(define, "");
 

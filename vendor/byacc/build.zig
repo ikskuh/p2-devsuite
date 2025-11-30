@@ -6,13 +6,13 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const backtracking = b.option(bool, "backtracking", "Enables or disables backtracking (default: disabled") orelse false;
+    const backtracking = b.option(bool, "backtracking", "Enables or disables backtracking (default: disabled)") orelse false;
 
     const upstream_dep = b.dependency("upstream", .{});
 
     const byacc_config = b.addConfigHeader(
         .{
-            .style = .{ .autoconf = upstream_dep.path("config_h.in") },
+            .style = .{ .autoconf_undef = upstream_dep.path("config_h.in") },
             .include_path = "config.h",
         },
         .{
@@ -58,9 +58,11 @@ pub fn build(b: *std.Build) void {
 
     const byacc_exe = b.addExecutable(.{
         .name = "byacc",
-        .optimize = optimize,
-        .target = target,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .optimize = optimize,
+            .target = target,
+            .link_libc = true,
+        }),
     });
 
     byacc_exe.addConfigHeader(byacc_config);
