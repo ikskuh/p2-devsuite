@@ -100,7 +100,7 @@ pub fn build(b: *std.Build) void {
             .flags = cflags,
         });
 
-        if (optimize == .Debug or install_testlex)
+        if (optimize == .debug or install_testlex)
             b.installArtifact(testlex_exe);
     }
 
